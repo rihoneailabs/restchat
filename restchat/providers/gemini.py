@@ -55,7 +55,6 @@ user_setttings = [
         initial_index=0,
     )   
 ]
-    
 
 
 @cl.step(name="Gemini", 
