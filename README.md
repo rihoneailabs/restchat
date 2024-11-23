@@ -89,7 +89,7 @@ explictly tell `pip` to install a pre-build binary instead of building from sour
 To run the Chainlit app, use the following command:
 
 ```bash
-chainlit run restchat/__main__.py --host 0.0.0.0 --port 5500
+chainlit run restchat/app.py --host 0.0.0.0 --port 5500
 ```
 
 * You app should now be accessible at `http://localhost:5500`
