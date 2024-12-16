@@ -1,11 +1,13 @@
 [project]
 # Refer to: https://docs.chainlit.io/backend/config/project
 # Whether to enable telemetry (default: true). No personal data is collected.
-enable_telemetry = true
+enable_telemetry = false
 
 # List of environment variables to be provided by each user to use the app.
 user_env = [
-    "OPENAI_API_KEY"
+    "OPENAI_API_KEY",
+    "ANTHROPIC_API_KEY",
+    "GOOGLE_API_KEY"
 ]
 
 # Duration (in seconds) during which the session is saved when the connection is lost

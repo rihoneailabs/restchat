@@ -1,26 +1,21 @@
 
-import os
 from typing import Any
 
 import chainlit as cl
 import google.generativeai as genai
 from chainlit.input_widget import Select, Slider, NumberInput
 
-genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
-AVATAR = cl.Avatar(
-        name="Gemini",
-        url="https://github.com/ndamulelonemakh/remote-assets/blob/main/images/Google-Bard-Logo-758x473.jpg?raw=true",
-)
+
 chat_settings = settings = {
-        "max_output_tokens": 2000,
-        "model": "gemini-1.0-pro-latest",
+        "max_output_tokens": 4096,
+        "model": "gemini-2.0-flash-exp",
 }
 user_setttings = [
     Select(
         id="model",
         label="Model",
         # https://ai.google.dev/gemini-api/docs/models/gemini#model-variations
-        values=["gemini-1.0-pro-latest", "gemini-pro-vision", "gemini-pro"],
+        values=["gemini-2.0-flash-exp", "gemini-1.5-pro"],
         initial_index=0,
     ),
     Slider(
@@ -35,7 +30,7 @@ user_setttings = [
     Slider(
                 id="max_output_tokens",
                 label="Maxiumum Completions Tokens",
-                initial=2000,
+                initial=4096,
                 min=100,
                 max=32000,
                 step=10,
@@ -56,9 +51,11 @@ user_setttings = [
 ]
 
 
-@cl.step(name="Gemini", 
-         type="llm", 
-         root=True)
+def get_client(user_secrets: dict[str, str]):
+    genai.configure(api_key=user_secrets["GOOGLE_API_KEY"])
+    return genai
+
+
 async def call_gemini(query: str, 
                       settings: dict[str, Any] = chat_settings):
     

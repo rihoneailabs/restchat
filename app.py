@@ -42,7 +42,7 @@ async def load_chat_profiles():
 
 
 @cl.on_settings_update
-async def setup_agent(settings: dict[str, Any]):
+async def update_settings(settings: dict[str, Any]):
     cl.logger.debug(f"user settings updated: {settings}")
     existing_settings: dict = cl.user_session.get("chat_settings", {})
     existing_settings.update(settings)
@@ -55,37 +55,36 @@ async def setup_agent(settings: dict[str, Any]):
 
 @cl.on_chat_start
 async def on_chat_start():
-    active_chat_profile = cl.user_session.get("chat_profile")
+    active_chat_profile = cl.user_session.get("chat_profile") or "ChatGPT"
     if active_chat_profile == "ChatGPT":
-        from restchat.providers.chatgpt import AVATAR, chat_settings, call_chatgpt, user_setttings
+        from restchat.providers.chatgpt import chat_settings, call_chatgpt, user_setttings, get_client
 
         cl.user_session.set("prompt_history", [])
         cl.user_session.set("call_llm", call_chatgpt)
+        cl.user_session.set("get_client", get_client)
         cl.user_session.set("chat_settings", chat_settings)
         s = cl.ChatSettings(user_setttings)
         await s.send()
 
-        await AVATAR.send()
-
     elif active_chat_profile == "Claude":
-        from restchat.providers.claude import AVATAR, chat_settings, call_claude, user_setttings
+        from restchat.providers.claude import chat_settings, call_claude, user_setttings, get_client
 
         cl.user_session.set("prompt_history", "")
         cl.user_session.set("call_llm", call_claude)
+        cl.user_session.set("get_client", get_client)
         cl.user_session.set("chat_settings", chat_settings)
         s = cl.ChatSettings(user_setttings)
         await s.send()
 
-        await AVATAR.send()
     elif active_chat_profile == "Gemini":
-        from restchat.providers.gemini import AVATAR, chat_settings, call_gemini, user_setttings
+        from restchat.providers.gemini import chat_settings, call_gemini, user_setttings, get_client
         cl.user_session.set("prompt_history", [])
         cl.user_session.set("call_llm", call_gemini)
+        cl.user_session.set("get_client", get_client)
         cl.user_session.set("chat_settings", chat_settings)
         s = cl.ChatSettings(user_setttings)
         await s.send()
 
-        await AVATAR.send()
     else:
         await cl.ErrorMessage(f"Unsupported profile: {active_chat_profile}").send()
         return
@@ -96,6 +95,9 @@ async def on_chat_start():
 
 @cl.on_message
 async def chat(message: cl.Message):
+    get_client = cl.user_session.get("get_client")
+    client = get_client(cl.user_session.get("env"))
+
     chat_callback = cl.user_session.get("call_llm")
     chat_settings = cl.user_session.get("chat_settings")
-    await chat_callback(message.content, chat_settings)
+    await chat_callback(client, message.content, chat_settings)
