@@ -4,7 +4,6 @@ from typing import Any
 
 import anthropic
 import chainlit as cl
-from chainlit.playground.providers import Anthropic
 from chainlit.input_widget import Select, Slider
 
 anthropic_client = anthropic.AsyncAnthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
@@ -70,7 +69,6 @@ async def call_claude(query: str, settings: dict[str, Any] = None):
         formatted=prompt,
         completion=cl.context.current_step.output,
         settings=settings,
-        provider=Anthropic.id,
     )
 
     cl.user_session.set("prompt_history", prompt + cl.context.current_step.output)

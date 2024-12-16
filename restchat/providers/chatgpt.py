@@ -4,16 +4,16 @@ import os
 from typing import Any
 from openai import AsyncOpenAI
 
-from chainlit.playground.providers import ChatOpenAI
-from chainlit.playground.providers.openai import stringify_function_call
+# from chainlit.playground.providers import ChatOpenAI
+# from chainlit.playground.providers.openai import stringify_function_call
 import chainlit as cl
 from chainlit.input_widget import Select, Slider
 
 
 open_ai_client = AsyncOpenAI(api_key=os.environ["OPENAI_API_KEY"])
 AVATAR = cl.Avatar(
-        name="ChatGPT",
-        url="https://github.com/ndamulelonemakh/remote-assets/blob/7ed514dbd99ab86536daf3942127822bd979936c/images/openai-logomark.png?raw=true",
+    name="ChatGPT",
+    url="https://github.com/ndamulelonemakh/remote-assets/blob/7ed514dbd99ab86536daf3942127822bd979936c/images/openai-logomark.png?raw=true",
 )
 tools = [
     {
@@ -36,13 +36,7 @@ tools = [
     }
 ]
 
-chat_settings = {
-        "model": "gpt-4",
-        "tools": tools,
-        "tool_choice": "auto",
-        "max_tokens": 1000,
-        "temperature": 0.2
-}
+chat_settings = {"model": "gpt-4", "tools": tools, "tool_choice": "auto", "max_tokens": 1000, "temperature": 0.2}
 user_setttings = [
     Select(
         id="model",
@@ -51,26 +45,31 @@ user_setttings = [
         initial_index=0,
     ),
     Slider(
-                id="temperature",
-                label="Temperature",
-                initial=0.2,
-                min=0,
-                max=1,
-                step=0.1,
-            ),
-    Slider(
-                id="max_tokens",
-                label="Maxiumum Completions Tokens",
-                initial=1000,
-                min=100,
-                max=32000,
-                step=10,
-                description="The maximum allowable tokens in the response",
+        id="temperature",
+        label="Temperature",
+        initial=0.2,
+        min=0,
+        max=1,
+        step=0.1,
     ),
-    
+    Slider(
+        id="max_tokens",
+        label="Maxiumum Completions Tokens",
+        initial=1000,
+        min=100,
+        max=32000,
+        step=10,
+        description="The maximum allowable tokens in the response",
+    ),
 ]
 MAX_ITER = 5
 
+
+def stringify_function_call(function_call):
+    function_name = function_call.name
+    arguments = function_call.arguments
+
+    return f"{function_name}({arguments})"
 
 
 # Example dummy function hard coded to return the same weather
@@ -120,10 +119,8 @@ async def _get_chat_completions(message_history: list[dict], settings: dict[str,
     settings = settings or chat_settings
     if "max_tokens" in settings:
         settings["max_tokens"] = int(settings["max_tokens"])
-        
-    response = await open_ai_client.chat.completions.create(
-        messages=message_history, **settings
-    )
+
+    response = await open_ai_client.chat.completions.create(messages=message_history, **settings)
 
     message = response.choices[0].message
     for tool_call in message.tool_calls or []:
@@ -142,9 +139,7 @@ async def _get_chat_completions(message_history: list[dict], settings: dict[str,
     return message
 
 
-@cl.step(name="ChatGPT", 
-         type="llm", 
-         root=True)
+@cl.step(name="ChatGPT", type="llm", root=True)
 async def call_chatgpt_with_tools(query: str, settings: dict[str, Any] = None):
     message_history = cl.user_session.get("prompt_history")
     message_history.append({"name": "user", "role": "user", "content": query})
@@ -158,41 +153,28 @@ async def call_chatgpt_with_tools(query: str, settings: dict[str, Any] = None):
             break
 
         cur_iter += 1
-        
-        
-        
-@cl.step(name="ChatGPT", 
-         type="llm", 
-         root=True)
+
+
+@cl.step(name="ChatGPT", type="llm", root=True)
 async def call_chatgpt(query: str, settings: dict[str, Any] = chat_settings):
     message_history = cl.user_session.get("prompt_history")
     message_history.append({"name": "User", "role": "user", "content": query})
 
-
     if "max_tokens" in settings:
         settings["max_tokens"] = int(settings["max_tokens"])
-        
-    stream = await open_ai_client.chat.completions.create(
-        messages=message_history, 
-        stream=True,
-        **settings
-    )
-    
+
+    stream = await open_ai_client.chat.completions.create(messages=message_history, stream=True, **settings)
+
     async for part in stream:
         token = part.choices[0].delta.content
         if token:
             await cl.context.current_step.stream_token(token)
-        
-    
+
     cl.context.current_step.generation = cl.CompletionGeneration(
         formatted=query,
         completion=cl.context.current_step.output,
         settings=settings,
-        provider=ChatOpenAI.id,
     )
 
-    message_history.append({"name": "ChatGPT", 
-                            "role": "assistant", 
-                            "content": cl.context.current_step.output})
+    message_history.append({"name": "ChatGPT", "role": "assistant", "content": cl.context.current_step.output})
     cl.user_session.set("prompt_history", message_history)
-    

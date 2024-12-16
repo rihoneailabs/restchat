@@ -4,7 +4,6 @@ from typing import Any
 
 import chainlit as cl
 import google.generativeai as genai
-from chainlit.playground.providers import Gemini
 from chainlit.input_widget import Select, Slider, NumberInput
 
 genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
@@ -85,7 +84,6 @@ async def call_gemini(query: str,
         formatted=query,
         completion=cl.context.current_step.output,
         settings=settings,
-        provider=Gemini.id,
     )
 
     updated_history = prompt_history + chat.history
