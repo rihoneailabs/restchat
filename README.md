@@ -14,11 +14,11 @@
 ## Features
 
 - Integration with top 5 AI model providers, inlcuding:
-   - [OpenAI](https://openai.com/) / [Azure OpenAI](https://learn.microsoft.com/en-us/azure/ai-services/openai/overview)
-   - [Anthropic](https://www.anthropic.com/)
-   - [AWS Bedrock](https://www.gemini.com/)
-   - [Huggingface](https://www.gemini.com/)
-   - [Google AI](https://www.gemini.com/)
+   - [ x ] [OpenAI](https://openai.com/) / [Azure OpenAI](https://learn.microsoft.com/en-us/azure/ai-services/openai/overview)
+   - [ x ] [Anthropic](https://www.anthropic.com/)
+   - [ x ] [Google AI](https://www.gemini.com/)
+   - [   ] [AWS Bedrock](https://www.gemini.com/)
+   - [   ] [Huggingface](https://www.gemini.com/)
 - Support multiple chat profiles including
    - [ x ] LLM Chat
    - [ x ] Text to Image
@@ -30,7 +30,9 @@
 - Chainlit Custom logo and favicon
 - Chainlit Custom theme
 
-## Installation
+## Running Locally
+
+### Installation
 
 1. Clone the repository:
 
@@ -43,7 +45,7 @@
 
    ```bash
    python -m venv venv         # We assume you are using at least Python 3.11
-   source venv/bin/activate    # For Unix-based systems
+   source venv/bin/activate    # For Unix-based systems i.e. MacOS, Ubuntu etc.
    venv\Scripts\activate.bat   # For Windows
    ```
 
@@ -61,15 +63,14 @@
 explictly tell `pip` to install a pre-build binary instead of building from source: `pip install -U --prefer-binary tokenizers anthropic`
 
 
-## Configuration
+### Configuration
 
 1. Rename the provided `.env.example` file into `.env` in the project root directory.
 
 2. Modify the `.env` file by setting the required configuration variables as follows:
 
    ```bash
-   DEFAULT_USER_PASSWORD=your_default_user_password
-   CHAINLIT_AUTH_SECRET=your_64_char_chainlit_auth_secret_for_signing_tokens
+   CHAINLIT_AUTH_SECRET=your_64_char_secret_for_signing_auth_tokens
    LITERAL_API_KEY=your_literal_api_key_for_storing_chat_history
    
    # Optional: At least one of the following chat providers is required
@@ -79,17 +80,22 @@ explictly tell `pip` to install a pre-build binary instead of building from sour
    
    # Optional
    DEFAULT_USERNAME=your_default_username  # Default: "admin"
+   DEFAULT_USER_PASSWORD=your_default_user_password
+
+   # Recommended: OAuth settings (see https://docs.chainlit.io/authentication/oauth)
+   OAUTH_GOOGLE_CLIENT_ID=your_google_client_id
+   OAUTH_GOOGLE_CLIENT_SECRET=your_google_client_secret
    ```
 
     > **Hints:** You can generate a 64-character secret key using the following command: `chainlit create-secret`. To
     > obtain an API key for [Literal](https://literal.chainlit.com), sign up for an account and create a new project.
 
-## Usage
+### Usage
 
 To run the Chainlit app, use the following command:
 
 ```bash
-chainlit run restchat/app.py --host 0.0.0.0 --port 5500
+chainlit run app.py --host 0.0.0.0 --port 5500
 ```
 
 * You app should now be accessible at `http://localhost:5500`
@@ -98,18 +104,16 @@ chainlit run restchat/app.py --host 0.0.0.0 --port 5500
 
 The project structure is organized as follows:
 
-- `src/`: Contains the main application code.
 - `.chainlit/`: Contains the Chainlit configuration files.
+- `restchat/`: Contains the core application code.
 - `public/`: Contains the static files for custom logos and favicons.
 - `app.py`: The main application entry point.
-- `.env.example`: Stores the environment variables template.
 - `requirements.txt`: Lists the project dependencies.
-- `chainlit.md`: Provides documentation and instructions for the project.
+- `.env.example`: Stores the environment variables template.
 
 ## Issues
 
 - Bugs and issues can be reported on the [GitHub Issues](https://github.com/rihoneailabs/restchat/issues) page.
-- If you have any further questions or inquiries, feel free to [contact us](mailto://info@rihonegroup.com). 
 
 ## License
 
@@ -127,10 +131,6 @@ We welcome contributions from the community to help improve **REST Chat**! Here�
 4. **Push to the branch**: `git push origin feature/new-feature`.
 5. **Open a pull request**.
 
-Please check out our [CONTRIBUTING.md](link_to_contributing_guidelines) for more details.
-
----
-
 ---
 
 ## 🌐 Roadmap
@@ -141,8 +141,9 @@ This is an early-stage research version. Here’s what we plan to explore in fut
 - [ ] AWS Click to Deploy
 - [ ] Multimodal Chat (`WIP`)
 - [ ] Voice Chat (`WIP`)
-- [ ] [Experimental] Text to Media - Music or Video (`WIP`)
 - [ ] [vLLM](https://arxiv.org/abs/2109.03828) intergration
+- [ ] [Experimental] Text to Media - Music or Video (`WIP`)
+- [ ] Multi-lingual support
 
 ---
 

@@ -4,7 +4,9 @@
 enable_telemetry = true
 
 # List of environment variables to be provided by each user to use the app.
-user_env = []
+user_env = [
+    "OPENAI_API_KEY"
+]
 
 # Duration (in seconds) during which the session is saved when the connection is lost
 session_timeout = 3600
@@ -13,7 +15,7 @@ session_timeout = 3600
 cache = false
 
 # Authorized origins
-allow_origins = ["*"]
+allow_origins = []
 
 # Follow symlink for asset mount (see https://github.com/Chainlit/chainlit/issues/317)
 # follow_symlink = false
@@ -40,9 +42,9 @@ auto_tag_thread = true
 
 # Allows user to use speech to text
 [features.speech_to_text]
-    enabled = false
+    enabled = true
     # See all languages here https://github.com/JamesBrill/react-speech-recognition/blob/HEAD/docs/API.md#language-string
-     language = "en-US"
+    language = "en-US"
 
 [UI]
 # Name of the app and chatbot.
