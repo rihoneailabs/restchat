@@ -4,6 +4,9 @@ version = "0.1.0rc1"
 description = "Chat with advanced AI models using your own REST API Keys"
 authors = ["Ndamulelo Nemakhavhani <info@rihonegroup.com>"]
 readme = "README.md"
+packages = [
+    { include = "restchat", from = "." }
+]
 
 
 [tool.poetry.dependencies]

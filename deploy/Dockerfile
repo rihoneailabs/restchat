@@ -3,17 +3,21 @@ FROM python:3.12-slim
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
+# Copy only requirements first to leverage Docker cache
 COPY requirements.txt .
-COPY restchat/ ./restchat
-COPY app.py setup.py ./
+COPY pyproject.toml  .
 
-# Install any needed dependencies specified in requirements.txt
-RUN pip install -r requirements.txt
+# Install dependencies
+RUN pip install -r requirements.txt && \
+    pip install -U --prefer-binary tokenizers anthropic && \
+    pip install .
 
+# Copy the rest of the application
 COPY public/ ./public
 COPY .chainlit/ ./.chainlit
-COPY README.md chainlit.md ./
+COPY README.md LICENSE ./
+COPY restchat/ ./restchat
+COPY app.py setup.py ./
 
 # Set environment variables
 ENV PYTHONUNBUFFERED 1

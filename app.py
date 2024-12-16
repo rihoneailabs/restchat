@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timezone
 from typing import Any
 
 import chainlit as cl
@@ -10,8 +11,9 @@ def auth_callback(username: str, password: str):
     # and compare the hashed password with the value stored in the database
     if (username, password) == (os.getenv("DEFAULT_USERNAME", "admin"), os.getenv("DEFAULT_USER_PASSWORD")):
         return cl.User(
-            identifier=os.getenv("DEFAULT_USERNAME"),
+            identifier=username,
             metadata={"role": "user",
+                      "last_login": datetime.now(timezone.utc).isoformat(),
                       "provider": "credentials"}
         )
     else:
@@ -33,7 +35,7 @@ async def load_chat_profiles():
         ),
         cl.ChatProfile(
             name="Gemini",
-            markdown_description="Germini Pro by Google and DeepMind",
+            markdown_description="Germini Pro by Google",
             icon="https://github.com/ndamulelonemakh/remote-assets/blob/main/images/Google-Bard-Logo-758x473.jpg?raw=true",
         )
     ]
@@ -88,7 +90,8 @@ async def on_chat_start():
         await cl.ErrorMessage(f"Unsupported profile: {active_chat_profile}").send()
         return
 
-    await cl.Message(f"Welcome back, ##TODO-USERNAME. {active_chat_profile} is ready to fulfill your requests!").send()
+    current_user = cl.user_session.get("user")
+    await cl.Message(f"{active_chat_profile}: Welcome back, {current_user.identifier}. How can I assit?").send()
 
 
 @cl.on_message
