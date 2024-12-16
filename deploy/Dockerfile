@@ -17,7 +17,7 @@ COPY public/ ./public
 COPY .chainlit/ ./.chainlit
 COPY README.md LICENSE ./
 COPY restchat/ ./restchat
-COPY app.py setup.py ./
+COPY app.py ./
 
 # Set environment variables
 ENV PYTHONUNBUFFERED 1
