@@ -26,8 +26,6 @@ def oauth_callback(
     default_user: cl.User,
 ) -> Optional[cl.User]:
     cl.logger.info(f"OAuth callback: {provider_id}. User authenticated: {default_user.identifier}")
-    cl.user_session.set(f"{provider_id}:token", token)
-    cl.user_session.set(f"{provider_id}:user_data", raw_user_data)
     return default_user
 
 
