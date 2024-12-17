@@ -4,12 +4,13 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
 
-[Live Demo]()
+[Live Demo](https://restchat-production.up.railway.app/)
 
 [Deploy To Azure]()
 
 [Deploy To AWS]()
 
+![Preview screenshot](./docs/screenshot.png)
 
 ## Features
 
@@ -90,7 +91,7 @@ explictly tell `pip` to install a pre-build binary instead of building from sour
     > **Hints:** You can generate a 64-character secret key using the following command: `chainlit create-secret`. To
     > obtain an API key for [Literal](https://literal.chainlit.com), sign up for an account and create a new project.
 
-### Usage
+### Run web app
 
 To run the Chainlit app, use the following command:
 
