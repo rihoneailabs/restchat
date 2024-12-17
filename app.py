@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Optional
 
 import chainlit as cl
 
@@ -12,12 +12,23 @@ def auth_callback(username: str, password: str):
     if (username, password) == (os.getenv("DEFAULT_USERNAME", "admin"), os.getenv("DEFAULT_USER_PASSWORD")):
         return cl.User(
             identifier=username,
-            metadata={"role": "user",
-                      "last_login": datetime.now(timezone.utc).isoformat(),
-                      "provider": "credentials"}
+            metadata={"role": "user", "last_login": datetime.now(timezone.utc).isoformat(), "provider": "credentials"},
         )
     else:
         return None
+
+
+@cl.oauth_callback
+def oauth_callback(
+    provider_id: str,
+    token: str,
+    raw_user_data: dict[str, str],
+    default_user: cl.User,
+) -> Optional[cl.User]:
+    cl.logger.info(f"OAuth callback: {provider_id}. User authenticated: {default_user.identifier}")
+    cl.user_session.set(f"{provider_id}:token", token)
+    cl.user_session.set(f"{provider_id}:user_data", raw_user_data)
+    return default_user
 
 
 @cl.set_chat_profiles
@@ -37,7 +48,7 @@ async def load_chat_profiles():
             name="Gemini",
             markdown_description="Germini Pro by Google",
             icon="https://github.com/ndamulelonemakh/remote-assets/blob/main/images/Google-Bard-Logo-758x473.jpg?raw=true",
-        )
+        ),
     ]
 
 
@@ -78,6 +89,7 @@ async def on_chat_start():
 
     elif active_chat_profile == "Gemini":
         from restchat.providers.gemini import chat_settings, call_gemini, user_setttings, get_client
+
         cl.user_session.set("prompt_history", [])
         cl.user_session.set("call_llm", call_gemini)
         cl.user_session.set("get_client", get_client)
