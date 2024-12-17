@@ -6,6 +6,7 @@ WORKDIR /app
 # Copy only requirements first to leverage Docker cache
 COPY requirements.txt .
 COPY pyproject.toml  .
+COPY README.md  .
 
 # Install dependencies
 RUN pip install -r requirements.txt && \
@@ -15,7 +16,7 @@ RUN pip install -r requirements.txt && \
 # Copy the rest of the application
 COPY public/ ./public
 COPY .chainlit/ ./.chainlit
-COPY README.md LICENSE ./
+COPY LICENSE ./
 COPY restchat/ ./restchat
 COPY app.py ./
 
